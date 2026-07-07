@@ -1,4 +1,3 @@
-manage.py
 venv/
 __pycache__/
 *.pyc
