@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Emergency Contacts</h2>
+
+    <form method="GET">
+
+        <div class="mb-3">
+
+            <label>Enter City</label>
+
+            <input type="text"
+                   name="city"
+                   class="form-control"
+                   placeholder="Enter City"
+                   value="{{ request.GET.city }}">
+
+        </div>
+
+        <button type="submit" class="btn btn-danger">
+            Search
+        </button>
+
+    </form>
+
+    <hr>
+
+    {% if contacts %}
+
+    <table class="table table-bordered table-striped">
+
+        <thead>
+
+            <tr>
+                <th>City</th>
+                <th>Ambulance</th>
+                <th>Police</th>
+                <th>Fire</th>
+                <th>Helpline</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for contact in contacts %}
+
+            <tr>
+
+                <td>{{ contact.city }}</td>
+                <td>{{ contact.ambulance }}</td>
+                <td>{{ contact.police }}</td>
+                <td>{{ contact.fire }}</td>
+                <td>{{ contact.helpline }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% elif request.GET.city %}
+
+    <div class="alert alert-warning">
+
+        No Emergency Contact Found.
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Travel Recommendation</h2>
+
+    <form method="GET">
+
+        <div class="mb-3">
+
+            <label>Enter City</label>
+
+            <input
+                type="text"
+                name="city"
+                class="form-control"
+                placeholder="Enter City"
+                value="{{ request.GET.city }}"
+                required>
+
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Search
+        </button>
+
+    </form>
+
+    <hr>
+
+    {% if recommendation %}
+
+    <table class="table table-bordered">
+
+        <tr>
+            <th>City</th>
+            <td>{{ recommendation.city }}</td>
+        </tr>
+
+        <tr>
+            <th>Recommended Place</th>
+            <td>{{ recommendation.place }}</td>
+        </tr>
+
+        <tr>
+            <th>Best Time</th>
+            <td>{{ recommendation.best_time }}</td>
+        </tr>
+
+        <tr>
+            <th>Transport</th>
+            <td>{{ recommendation.transport }}</td>
+        </tr>
+
+        <tr>
+            <th>Travel Tip</th>
+            <td>{{ recommendation.tip }}</td>
+        </tr>
+
+    </table>
+
+    {% elif request.GET.city %}
+
+    <div class="alert alert-warning">
+
+        No Recommendation Found.
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

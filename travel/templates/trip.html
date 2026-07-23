@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Trip Planner</h2>
+
+{% if message %}
+<div class="alert alert-success">
+    {{ message }}
+</div>
+{% endif %}
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control"
+               value="{{ trip.name|default:'' }}">
+    </div>
+
+    <div class="mb-3">
+        <label>City</label>
+        <input type="text" name="city" class="form-control"
+               value="{{ trip.city|default:'' }}">
+    </div>
+
+    <div class="mb-3">
+        <label>Budget</label>
+        <input type="number" name="budget" class="form-control"
+               value="{{ trip.budget|default:'' }}">
+    </div>
+
+    <div class="mb-3">
+        <label>Days</label>
+        <input type="number" name="days" class="form-control"
+               value="{{ trip.days|default:'' }}">
+    </div>
+
+    <div class="mb-3">
+        <label>Members</label>
+        <input type="number" name="members" class="form-control"
+               value="{{ trip.members|default:'' }}">
+    </div>
+
+    <button class="btn btn-success">
+        {% if trip %}
+            Update Trip
+        {% else %}
+            Save Trip
+        {% endif %}
+    </button>
+
+</form>
+
+{% if budget_per_day %}
+
+<hr>
+
+<div class="alert alert-info">
+
+    <h4>Trip Budget Summary</h4>
+
+    <p><strong>Budget Per Day:</strong> ₹{{ budget_per_day }}</p>
+
+    <p><strong>Budget Per Person:</strong> ₹{{ budget_per_person }}</p>
+
+    <p><strong>Recommendation:</strong> {{ recommendation }}</p>
+
+    <p><strong>Suggestion:</strong> {{ suggestion }}</p>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

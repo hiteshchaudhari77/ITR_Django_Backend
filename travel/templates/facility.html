@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Nearby Facilities</h2>
+
+    <form method="GET">
+
+        <div class="mb-3">
+
+            <label>Enter City</label>
+
+            <input
+                type="text"
+                name="city"
+                class="form-control"
+                placeholder="Enter City"
+                value="{{ request.GET.city }}"
+                required>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Search
+        </button>
+
+    </form>
+
+    <hr>
+
+    {% if facility %}
+
+    <table class="table table-bordered">
+
+        <tr>
+            <th>City</th>
+            <td>{{ facility.city }}</td>
+        </tr>
+
+        <tr>
+            <th>Hotel</th>
+            <td>{{ facility.hotel }}</td>
+        </tr>
+
+        <tr>
+            <th>Restaurant</th>
+            <td>{{ facility.restaurant }}</td>
+        </tr>
+
+        <tr>
+            <th>Hospital</th>
+            <td>{{ facility.hospital }}</td>
+        </tr>
+
+        <tr>
+            <th>Police Station</th>
+            <td>{{ facility.police }}</td>
+        </tr>
+
+        <tr>
+            <th>Bus Stand</th>
+            <td>{{ facility.bus_stand }}</td>
+        </tr>
+
+        <tr>
+            <th>Railway Station</th>
+            <td>{{ facility.railway_station }}</td>
+        </tr>
+
+    </table>
+
+    {% elif request.GET.city %}
+
+    <div class="alert alert-warning">
+
+        No Facility Found.
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="text-center mb-4">
+        AI Powered Smart Kumbh Mela Travel Assistant
+    </h2>
+
+    <!-- Dashboard -->
+
+    <div class="row">
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white text-center">
+                <div class="card-body">
+                    <h5>Total Trips</h5>
+                    <h2>{{ total_trips }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white text-center">
+                <div class="card-body">
+                    <h5>Facilities</h5>
+                    <h2>{{ total_facilities }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-danger text-white text-center">
+                <div class="card-body">
+                    <h5>Emergency</h5>
+                    <h2>{{ total_emergency }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark text-center">
+                <div class="card-body">
+                    <h5>Recommendations</h5>
+                    <h2>{{ total_recommendation }}</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Search -->
+
+    <form method="GET" class="mb-4">
+
+        <div class="row">
+
+            <div class="col-md-10">
+
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search Trip by City..."
+                    value="{{ search }}">
+
+            </div>
+
+            <div class="col-md-2">
+
+                <button class="btn btn-primary w-100">
+
+                    Search
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+    <!-- Trip Table -->
+
+    <h3>Trip List</h3>
+
+    <table class="table table-bordered table-striped">
+
+        <thead class="table-dark">
+
+            <tr>
+
+                <th>Name</th>
+                <th>City</th>
+                <th>Budget</th>
+                <th>Days</th>
+                <th>Members</th>
+                <th>Edit</th>
+                <th>Delete</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for trip in trips %}
+
+        <tr>
+
+            <td>{{ trip.name }}</td>
+            <td>{{ trip.city }}</td>
+            <td>₹ {{ trip.budget }}</td>
+            <td>{{ trip.days }}</td>
+            <td>{{ trip.members }}</td>
+
+            <td>
+
+                <a href="/edit/{{ trip.id }}/"
+                   class="btn btn-warning btn-sm">
+
+                    Edit
+
+                </a>
+
+            </td>
+
+            <td>
+
+                <a href="/delete/{{ trip.id }}/"
+                   class="btn btn-danger btn-sm">
+
+                    Delete
+
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+
+            <td colspan="7" class="text-center">
+
+                No Trips Found
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
