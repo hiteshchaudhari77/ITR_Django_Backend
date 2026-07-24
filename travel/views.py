@@ -14,7 +14,7 @@ def home(request):
     else:
         trips = Trip.objects.none()
 
-    search = request.GET.get("search")
+    search = request.GET.get("search", "").strip()
 
     if search:
         trips = trips.filter(
@@ -53,11 +53,37 @@ def trip(request):
 
     if request.method == "POST":
 
-        name = request.POST.get("name")
-        city = request.POST.get("city")
+        name = request.POST.get("name").strip()
+        city = request.POST.get("city").strip()
         budget = int(request.POST.get("budget"))
         days = int(request.POST.get("days"))
         members = int(request.POST.get("members"))
+
+        # Validation
+        if not name:
+            return render(request, "trip.html", {
+                "error": "Name is required."
+            })
+
+        if not city:
+            return render(request, "trip.html", {
+                "error": "City is required."
+            })
+
+        if budget <= 0:
+            return render(request, "trip.html", {
+                "error": "Budget must be greater than 0."
+            })
+
+        if days <= 0:
+            return render(request, "trip.html", {
+                "error": "Days must be greater than 0."
+            })
+
+        if members <= 0:
+            return render(request, "trip.html", {
+                "error": "Members must be greater than 0."
+            })
 
         Trip.objects.create(
             user=request.user,
@@ -96,7 +122,11 @@ def trip(request):
 
 def edit_trip(request, id):
 
-    trip = get_object_or_404(Trip, id=id)
+    trip = get_object_or_404(
+        Trip,
+        id=id,
+        user=request.user
+    )
 
     if request.method == "POST":
 
@@ -117,7 +147,11 @@ def edit_trip(request, id):
 
 def delete_trip(request, id):
 
-    trip = get_object_or_404(Trip, id=id)
+    trip = get_object_or_404(
+        Trip,
+        id=id,
+        user=request.user
+    )
 
     trip.delete()
 

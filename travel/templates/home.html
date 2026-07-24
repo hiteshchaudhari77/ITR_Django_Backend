@@ -64,8 +64,8 @@
                     type="text"
                     name="search"
                     class="form-control"
-                    placeholder="Search Trip by City..."
-                    value="{{ search }}">
+                    placeholder="Search by City or Trip Name..."
+                    value="{{ search|default_if_none:'' }}">
 
             </div>
 
@@ -93,7 +93,7 @@
 
             <tr>
 
-                <th>Name</th>
+                <th>Trip Name</th>
                 <th>City</th>
                 <th>Budget</th>
                 <th>Days</th>

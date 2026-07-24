@@ -4,6 +4,12 @@
 
 <h2>Trip Planner</h2>
 
+{% if error %}
+<div class="alert alert-danger">
+    {{ error }}
+</div>
+{% endif %}
+
 {% if message %}
 <div class="alert alert-success">
     {{ message }}
@@ -15,33 +21,52 @@
     {% csrf_token %}
 
     <div class="mb-3">
-        <label>Name</label>
-        <input type="text" name="name" class="form-control"
-               value="{{ trip.name|default:'' }}">
+        <label>Trip Name</label>
+        <input type="text"
+       name="name"
+       class="form-control"
+       placeholder="e.g. Family Trip"
+       value="{{ trip.name|default:'' }}"
+       required>
     </div>
 
     <div class="mb-3">
         <label>City</label>
-        <input type="text" name="city" class="form-control"
-               value="{{ trip.city|default:'' }}">
+        <input type="text"
+               name="city"
+               class="form-control"
+               value="{{ trip.city|default:'' }}"
+               required>
     </div>
 
     <div class="mb-3">
         <label>Budget</label>
-        <input type="number" name="budget" class="form-control"
-               value="{{ trip.budget|default:'' }}">
+        <input type="number"
+               name="budget"
+               class="form-control"
+               value="{{ trip.budget|default:'' }}"
+               min="1"
+               required>
     </div>
 
     <div class="mb-3">
         <label>Days</label>
-        <input type="number" name="days" class="form-control"
-               value="{{ trip.days|default:'' }}">
+        <input type="number"
+               name="days"
+               class="form-control"
+               value="{{ trip.days|default:'' }}"
+               min="1"
+               required>
     </div>
 
     <div class="mb-3">
         <label>Members</label>
-        <input type="number" name="members" class="form-control"
-               value="{{ trip.members|default:'' }}">
+        <input type="number"
+               name="members"
+               class="form-control"
+               value="{{ trip.members|default:'' }}"
+               min="1"
+               required>
     </div>
 
     <button class="btn btn-success">
