@@ -2,36 +2,54 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.db.models import Q
 
 from .models import Trip, Facility, EmergencyContact, Recommendation
 
 
 def home(request):
 
+    if request.user.is_authenticated:
+        trips = Trip.objects.filter(user=request.user)
+    else:
+        trips = Trip.objects.none()
+
     search = request.GET.get("search")
 
     if search:
-        trips = Trip.objects.filter(city__icontains=search)
-    else:
-        trips = Trip.objects.all()
+        trips = trips.filter(
+        Q(city__icontains=search) |
+        Q(name__icontains=search)
+    )
 
-    total_trips = Trip.objects.count()
+    total_trips = trips.count()
+    total_budget = sum(trip.budget for trip in trips)
+    total_members = sum(trip.members for trip in trips)
+    total_days = sum(trip.days for trip in trips)
     total_facilities = Facility.objects.count()
     total_emergency = EmergencyContact.objects.count()
     total_recommendation = Recommendation.objects.count()
 
     context = {
-        "trips": trips,
-        "search": search,
-        "total_trips": total_trips,
-        "total_facilities": total_facilities,
-        "total_emergency": total_emergency,
-        "total_recommendation": total_recommendation,
-    }
+    "trips": trips,
+    "search": search,
+
+    "total_trips": total_trips,
+    "total_budget": total_budget,
+    "total_members": total_members,
+    "total_days": total_days,
+
+    "total_facilities": total_facilities,
+    "total_emergency": total_emergency,
+    "total_recommendation": total_recommendation,
+}
 
     return render(request, "home.html", context)
 
 def trip(request):
+
+    if not request.user.is_authenticated:
+        return redirect("/login/")
 
     if request.method == "POST":
 
@@ -42,6 +60,7 @@ def trip(request):
         members = int(request.POST.get("members"))
 
         Trip.objects.create(
+            user=request.user,
             name=name,
             city=city,
             budget=budget,
