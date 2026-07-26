@@ -17,6 +17,24 @@ class Trip(models.Model):
     days = models.IntegerField(default=1)
     members = models.IntegerField(default=1)
 
+    STATUS_CHOICES = [
+    ("Planned", "Planned"),
+    ("Ongoing", "Ongoing"),
+    ("Completed", "Completed"),
+    ("Cancelled", "Cancelled"),
+    ]
+
+    status = models.CharField(
+    max_length=20,
+    choices=STATUS_CHOICES,
+    default="Planned"
+    )
+
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    spent_amount = models.IntegerField(default=0)
+
     def __str__(self):
         return self.name
 

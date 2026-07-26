@@ -31,10 +31,11 @@
     </div>
 
     <div class="mb-3">
-        <label>City</label>
+        <label>Destination City</label>
         <input type="text"
                name="city"
                class="form-control"
+               placeholder="e.g. Nashik"
                value="{{ trip.city|default:'' }}"
                required>
     </div>
@@ -52,11 +53,13 @@
     <div class="mb-3">
         <label>Days</label>
         <input type="number"
-               name="days"
-               class="form-control"
-               value="{{ trip.days|default:'' }}"
-               min="1"
-               required>
+        id="days"
+        name="days"
+        class="form-control"
+        value="{{ trip.days|default:'' }}"
+        min="1"
+        readonly
+        required>
     </div>
 
     <div class="mb-3">
@@ -68,6 +71,69 @@
                min="1"
                required>
     </div>
+
+    <div class="mb-3">
+    <label class="form-label">Start Date</label>
+    <input type="date"
+       name="start_date"
+       class="form-control"
+       value="{{ trip.start_date|date:'Y-m-d' }}"
+       required>
+</div>
+
+<div class="mb-3">
+    <label class="form-label">End Date</label>
+    <input type="date"
+       name="end_date"
+       class="form-control"
+       value="{{ trip.end_date|date:'Y-m-d' }}"
+       required>
+</div>
+
+    <div class="mb-3">
+    <label>Already Spent Amount (₹)</label>
+    <small class="text-muted">
+    Examples: Train Ticket, Hotel Advance, Registration Fee, Booking Charges
+    </small>
+
+    <input
+        type="number"
+        name="spent_amount"
+        class="form-control"
+        placeholder="e.g. 5000"
+        value="{{ trip.spent_amount|default:'0' }}"
+        min="0">
+</div>
+
+
+    <div class="mb-3">
+    <label>Trip Status</label>
+
+    <select name="status" class="form-select">
+
+        <option value="Planned"
+            {% if trip.status == "Planned" %}selected{% endif %}>
+            Planned
+        </option>
+
+        <option value="Ongoing"
+            {% if trip.status == "Ongoing" %}selected{% endif %}>
+            Ongoing
+        </option>
+
+        <option value="Completed"
+            {% if trip.status == "Completed" %}selected{% endif %}>
+            Completed
+        </option>
+
+        <option value="Cancelled"
+            {% if trip.status == "Cancelled" %}selected{% endif %}>
+            Cancelled
+        </option>
+
+    </select>
+
+</div>
 
     <button class="btn btn-success">
         {% if trip %}
@@ -95,8 +161,107 @@
 
     <p><strong>Suggestion:</strong> {{ suggestion }}</p>
 
+    <hr>
+
+<div class="card shadow-lg border-0 mt-4">
+
+    <div class="card-header bg-dark text-white">
+        <h4 class="mb-0">💰 Budget Analysis</h4>
+    </div>
+
+    <div class="card-body">
+
+        <div class="row text-center">
+
+            <div class="col-md-4 mb-3">
+                <div class="card border-success">
+                    <div class="card-body">
+                        <h6>Total Budget</h6>
+                        <h3 class="text-success">₹{{ budget|floatformat:0 }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card border-danger">
+                    <div class="card-body">
+                        <h6>Already Spent</h6>
+                        <h3 class="text-danger">₹{{ spent_amount|floatformat:0 }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h6>Remaining Budget</h6>
+                        <h3 class="text-primary">₹{{ remaining_budget|floatformat:0 }}</h3>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {% if remaining_budget > 0 %}
+
+        <div class="alert alert-success text-center">
+            <h5>{{ budget_status }}</h5>
+        </div>
+
+        {% elif remaining_budget == 0 %}
+
+        <div class="alert alert-warning text-center">
+            <h5>{{ budget_status }}</h5>
+        </div>
+
+        {% else %}
+
+        <div class="alert alert-danger text-center">
+            <h5>{{ budget_status }}</h5>
+        </div>
+
+        {% endif %}
+
+        <div class="alert alert-light border mt-3">
+    <small>
+        <strong>Note:</strong> "Already Spent" includes expenses paid before or during the trip, such as train tickets, hotel advance, registration fees, or booking charges.
+    </small>
+</div>
+
+    </div>
+
+</div>
+
 </div>
 
 {% endif %}
+
+<script>
+const startDate = document.querySelector('input[name="start_date"]');
+const endDate = document.querySelector('input[name="end_date"]');
+const daysInput = document.getElementById("days");
+
+function calculateDays() {
+
+    if (startDate.value && endDate.value) {
+
+        const start = new Date(startDate.value);
+        const end = new Date(endDate.value);
+
+        const diff = end - start;
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+
+        if (days > 0) {
+            daysInput.value = days;
+        } else {
+            daysInput.value = "";
+        }
+    }
+}
+
+startDate.addEventListener("change", calculateDays);
+endDate.addEventListener("change", calculateDays);
+</script>
 
 {% endblock %}

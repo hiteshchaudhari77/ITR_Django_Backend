@@ -98,6 +98,9 @@
                 <th>Budget</th>
                 <th>Days</th>
                 <th>Members</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
                 <th>Edit</th>
                 <th>Delete</th>
 
@@ -116,6 +119,23 @@
             <td>₹ {{ trip.budget }}</td>
             <td>{{ trip.days }}</td>
             <td>{{ trip.members }}</td>
+            <td>
+    {% if trip.status == "Planned" %}
+        <span class="badge bg-primary">Planned</span>
+
+    {% elif trip.status == "Ongoing" %}
+        <span class="badge bg-warning text-dark">Ongoing</span>
+
+    {% elif trip.status == "Completed" %}
+        <span class="badge bg-success">Completed</span>
+
+    {% else %}
+        <span class="badge bg-danger">Cancelled</span>
+    {% endif %}
+</td>
+
+    <td>{{ trip.start_date }}</td>
+    <td>{{ trip.end_date }}</td>
 
             <td>
 

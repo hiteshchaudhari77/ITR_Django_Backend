@@ -1,8 +1,11 @@
+from urllib import request
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.db.models import Q
+from datetime import datetime
 
 from .models import Trip, Facility, EmergencyContact, Recommendation
 
@@ -58,6 +61,10 @@ def trip(request):
         budget = int(request.POST.get("budget"))
         days = int(request.POST.get("days"))
         members = int(request.POST.get("members"))
+        spent_amount = int(request.POST.get("spent_amount"))
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        status = request.POST.get("status")
 
         # Validation
         if not name:
@@ -85,17 +92,55 @@ def trip(request):
                 "error": "Members must be greater than 0."
             })
 
+        # Date Validation
+
+        if not start_date or not end_date:
+            return render(request, "trip.html", {
+                "error": "Please select both Start Date and End Date."
+            })
+
+        start = datetime.strptime(start_date, "%Y-%m-%d")
+        end = datetime.strptime(end_date, "%Y-%m-%d")
+
+        if end < start:
+            return render(request, "trip.html", {
+                "error": "End Date cannot be earlier than Start Date."
+            })
+
+        actual_days = (end - start).days + 1
+
+        if actual_days != days:
+            return render(request, "trip.html", {
+                "error": f"According to selected dates, Days should be {actual_days}."
+            })
+
+        
+
         Trip.objects.create(
             user=request.user,
             name=name,
             city=city,
             budget=budget,
             days=days,
-            members=members
+            members=members,
+            status=status,
+            start_date=start_date,
+            end_date=end_date,
+            spent_amount=spent_amount
         )
 
-        budget_per_day = budget / days
-        budget_per_person = budget / members
+        budget_per_day = round(budget / days, 2)
+        budget_per_person = round(budget / members, 2)
+        remaining_budget = budget - spent_amount
+
+        if remaining_budget > 0:
+            budget_status = "✅ You are within your budget."
+
+        elif remaining_budget == 0:
+            budget_status = "⚠️ Your entire budget has been used."
+
+        else:
+            budget_status = f"❌ Budget Exceeded by ₹{abs(remaining_budget)}"
 
         if budget_per_person < 2000:
             recommendation = "🔴 Low Budget Trip"
@@ -111,10 +156,15 @@ def trip(request):
 
         return render(request, "trip.html", {
             "message": "Trip Saved Successfully!",
+            "budget": budget,
             "budget_per_day": budget_per_day,
             "budget_per_person": budget_per_person,
             "recommendation": recommendation,
-            "suggestion": suggestion
+            "suggestion": suggestion,
+
+            "spent_amount": spent_amount,
+            "remaining_budget": remaining_budget,
+            "budget_status": budget_status,
         })
 
     return render(request, "trip.html")
@@ -135,6 +185,12 @@ def edit_trip(request, id):
         trip.budget = request.POST.get("budget")
         trip.days = request.POST.get("days")
         trip.members = request.POST.get("members")
+        spent_amount = int(request.POST.get("spent_amount") or 0)
+
+        start_date = request.POST.get("start_date") or None
+        end_date = request.POST.get("end_date") or None
+
+        status = request.POST.get("status")
 
         trip.save()
 
